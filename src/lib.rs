@@ -1,22 +1,27 @@
+use std::env;
 use std::error::Error;
 use std::fs;
-use std::env;
 
-pub struct Args {
-    pub query: String,
-    pub filename: String,
-    pub case_sensitive: bool
+pub struct Args<'a> {
+    pub query: &'a str,
+    pub filename: &'a str,
+    pub case_sensitive: bool,
 }
-impl Args {
+
+impl Args<'_> {
     pub fn new(args: &[String]) -> Result<Args, &'static str> {
         if args.len() < 3 {
             return Err("Too few arguments");
         }
-        let query = args[1].clone();
-        let filename = args[2].clone();
+        let query = &args[1];
+        let filename = &args[2];
         println!("Searching for \"{}\" \nInside {}", query, filename);
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
-        Ok(Args { query, filename, case_sensitive})
+        Ok(Args {
+            query,
+            filename,
+            case_sensitive,
+        })
     }
 }
 
@@ -40,7 +45,7 @@ pub fn search_case_insensetive<'a>(query: &str, content: &'a str) -> Vec<&'a str
     result
 }
 
-pub fn grep(args: Args) -> Result<(), Box<dyn Error>> {
+pub fn grep_file(args: Args) -> Result<(), Box<dyn Error>> {
     let content = fs::read_to_string(&args.filename)?;
     // .expect(format!("Cannot open the file {}", args.filename).as_str());
     let res = if args.case_sensitive {
@@ -48,7 +53,6 @@ pub fn grep(args: Args) -> Result<(), Box<dyn Error>> {
     } else {
         search_case_insensetive(&args.query, &content)
     };
-
     println!("found: ");
     for line in res {
         println!("{}", line);
@@ -66,9 +70,11 @@ mod test {
 Rust:
 safe, fast, produCtive.
 Pick three.";
-        assert_eq!(vec!["safe, fast, produCtive."], search_case_insensetive(query, contents));
+        assert_eq!(
+            vec!["safe, fast, produCtive."],
+            search_case_insensetive(query, contents)
+        );
     }
-
     #[test]
     fn case_sensetive_test() {
         let query = "duct";

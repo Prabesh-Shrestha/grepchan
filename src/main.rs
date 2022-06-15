@@ -1,6 +1,6 @@
+use grepchan::*;
 use std::env;
 use std::process;
-use grepchan::*;
 
 fn main() {
     // collecting arguments from the user
@@ -9,7 +9,7 @@ fn main() {
         eprintln!("problem: {}", err);
         process::exit(1);
     });
-    if let Err(e) = grep(args){
+    if let Err(e) = grep_file(args) {
         eprintln!("There was an eror: {:?}", e);
         process::exit(1);
     }
