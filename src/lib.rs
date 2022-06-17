@@ -60,6 +60,25 @@ pub fn grep_file(args: Args) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+// pub fn grep_dir(args: Args) -> Result<(), Box<dyn Error>> {
+
+//     Ok(())
+// }
+
+// complete this
+// returns the paths of every files inside the folder
+pub fn read_dir(path_file: &str) -> Vec<String> {
+    let mut paths: Vec<String> = Vec::new();
+    let mut dirs: Vec<String> = vec![path_file.to_string()];
+    
+    vec![String::new()]
+}
+
+// checks if a path is to a dir or a file 
+pub fn is_dir(path_file: &str) -> bool {
+    fs::metadata(path_file).unwrap().is_dir()
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
